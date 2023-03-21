@@ -15,6 +15,7 @@ class NewProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<String> categories = ['Smoothies', 'Soft Drinks', 'Water'];
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add a Product'),
@@ -53,7 +54,6 @@ class NewProductScreen extends StatelessWidget {
                                 productController.newProduct.update(
                                     'imageUrl', (_) => imageUrl,
                                     ifAbsent: () => imageUrl);
-                                print(productController.newProduct['imageUrl']);
                               }
                             },
                             icon: const Icon(
@@ -81,12 +81,22 @@ class NewProductScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                _buildTextFormField('Product ID', 'id', productController),
                 _buildTextFormField('Product Name', 'name', productController),
                 _buildTextFormField(
                     'Product Description', 'description', productController),
-                _buildTextFormField(
-                    'Product Category', 'category', productController),
+                DropdownButtonFormField(
+                    iconSize: 20,
+                    decoration:
+                        const InputDecoration(hintText: 'Product Category'),
+                    items: categories.map((category) {
+                      return DropdownMenuItem(
+                          value: category, child: Text(category));
+                    }).toList(),
+                    onChanged: (value) {
+                      productController.newProduct.update(
+                          'category', (_) => value,
+                          ifAbsent: () => value);
+                    }),
                 const SizedBox(
                   height: 10,
                 ),
@@ -112,7 +122,7 @@ class NewProductScreen extends StatelessWidget {
                               productController.newProduct['description'],
                           imageUrl: productController.newProduct['imageUrl'],
                           isRecommended:
-                          productController.newProduct['isRecommended'],
+                              productController.newProduct['isRecommended'],
                           isPopular: productController.newProduct['isPopular'],
                           price: productController.newProduct['price'],
                           quantity: productController.newProduct['quantity']

@@ -1,14 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecom_backend/models/models.dart';
+import 'package:ecom_backend/models/order_stats_model.dart';
 
 class DatabaseService {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  Stream<List<Product>> getProducts() {
+  Future<List<OrderStats>> getOrderStats() {
     return _firebaseFirestore
-        .collection('product')
-        .snapshots()
-        .map((snapshot) {
+        .collection('order_stats')
+        .orderBy('datetime')
+        .get()
+        .then((querySnapshot) => querySnapshot.docs
+            .asMap()
+            .entries
+            .map((entry) => OrderStats.fromSnapshot(entry.value, entry.key))
+            .toList());
+  }
+
+  Stream<List<Product>> getProducts() {
+    return _firebaseFirestore.collection('product').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) => Product.fromSnapshot(doc)).toList();
     });
   }
